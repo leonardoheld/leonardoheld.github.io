@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- I have no idea how to 'include' links and scripts from other files -->
+    <!-- If you know how to do it, please let me know -->
+    <meta charset="UTF-8">
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
+
+    <!-- Local .css -->
+    <link rel="stylesheet" href="styles.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Please shut up about programmer's preferences when discussing memory safety</title>
+</head>
+
+<body>
+
+    <div class="content">
+        <div class="nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+        </div>
+
+        <div class="main-content">
+
+            <h1>Please shut up about programmer's preferences when discussing memory safety</h1>
+
+            <pre><code>&lt;rant></code></pre>
+
+            <p>Every time there's a discussion about Rust versus C++ or the like, someone comments something along the lines of <i>"systems written in C have been working for 40 or more years and it ain't a goddamn thing that will make me write another language"</i>. Good for you, but your opinion doesn't matter.</p>
+            <p>See, that's exactly the type of behaviour that makes actual engineers laugh at the mere sight of "Software" in front of "Engineering". It shows that our infant industry has zero regards for human value and we sorta just expect software to crash, bug and break. I'm not going to quote - <i>again</i> - the research that shows that memory-safety issues account for a more than significant number of vulnerabilities because frankly hard facts cannot change an opinion pulled out of a hat, but it's so incredibly alienating being part of an industry where grey beards <i>insist</i> in having such a backwards way of thinking.</p>
+
+            <p>Going back to the comparison between <i>engineers</i> engineers and whatever we are, I see a bit of a resentment of old timers who are simply tired of the churn of learning new tools. And I symphatize with that - a mechanical engineer doesn't have to upskill as much as a software engineer does, it's not like the fundamentals of solids has changed since the birth of the universe, so I <i>understand</i> the feeling of wanting to keep using our favorite PDP-11 virtual machine for everything, I just don't fundamentally agree with it from an user perspective.</p>
+
+            <p>Some of our guys cringe at the sight of <i>{bash, coreutils, systemd, whatever...} written in Rust</i> but the other side of this movement is that there is a renewed appreciation for software that won't make your system vulnerable with undefined behaviour and memory leak exploits. The <i>written in Rust</i> portion shows a minimal appreciation for the user. To me it says "I cared enough to use the best tools we have available so you have a somewhat performant and safe software".</p>
+
+            <p>To close, now talking directly to the guys I started ranting about in the first paragraph: you, as a programer, have a responsability with your users, and if there's a better tool out there to build safer systems, your opinion is worth nothing against it. No one, particularly you, should care about the oh so precious muscle memory in C, because it's fundamentally not about you, it's about the user.</p>
+            <pre><code>&lt;/rant></code></pre>
+
+        <div class="footer">
+            <p>Creation Date: May 7th, 2025</p>
+            <p>Author: Leonardo Held</p>
+        </div>
+</body>
+
+</html>

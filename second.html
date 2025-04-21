@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- I have no idea how to 'include' links and scripts from other files -->
+  <!-- If you know how to do it, please let me know -->
+  <meta charset="UTF-8">
+  <!-- Preconnect for Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- Local .css -->
+  <link rel="stylesheet" href="styles.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baby's first Homelab: setting up a Pi with Pi-hole, Traefik, Tailscale and Registry</title>
+</head>
+
+<body>
+  <script>hljs.highlightAll();</script>
+
+  <div class="content">
+    <div class="nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+    </div>
+
+    <div class="main-content">
+
+      <h1>Baby's first Homelab: setting up a Pi with Pi-hole, Traefik, Tailscale and Registry</h1>
+
+      <p>
+        Alright, buckle up, I'll tell you about my excuse of a homelab setup which basically works as a gateway
+        device but also runs some useful stuff. My requirements, per usual, are simple:
+      </p>
+
+      <ul>
+        <li>Self-hosted services need to be accesible from everywhere.</li>
+        <li>No stupid "this website is not protected" or whatever; TLS everywhere.</li>
+        <li>With few configurations I must be able to add new services.</li>
+        <li>Cannot cost me more than 10USD. Preferably, free.</li>
+      </ul>
+
+      <h2>Choosing the OS</h2>
+
+      <p>
+        I like systemd and package managers; that narrows down my choice of OS significantly. My day job is
+        building custom Linux distributions, so not having to create one will be a nice change of scenary, so
+        let's choose a binary distro too. I also don't want to compile software by hand (ie, I want to update
+        everything from package feeds) so I need something like Docker, which excludes any *BSD<a
+          href="#footnote-1">[0]</a>.
+      </p>
+
+      <p> Raspberry OS is a joke of course and nobody except the earliest of hobbists should use that. Debian is
+        okay-ish, but a little too "DYI" for some of my tastes, I really want training wheels... Canonical seems
+        to have everything somewhat under control these days. As in, Ubuntu is actually quite legit and they
+        seem to really have made a nice server distro. Let's roll with that and see what happens.
+      </p>
+
+      <p>I selected whatever the latest Ubuntu Server is, which was 24.04. It's not a critical server, so I don't
+        care about running battle-tested LTS software on it. To flash it, I simply used the Raspberry Pi imager.
+        Feels nice not having to reach for the terminal all the time.</p>
+
+      <img src="second/raspberry-pi-imager.png" alt="Raspberry Pi Imager Screenshot" class="shadowed-image">
+      <figcaption>You can image an SD Card or USB drive with Ubuntu Server directly from the Raspberry Pi Imager.
+      </figcaption>
+
+      <p>I also recommend you to setup your ssh key and WiFi password in the imager itself, as it's a chore to do
+        it aftewards. Then you can pop that storage into the Pi and SSH directly into
+        <code>ssh leon@raspberrypi.local</code>, as the default Ubuntu image contains a software called Avahi,
+        which implements something called Multicast DNS (mDNS): basically, it's a little DNS server that
+        resolves hostnames into local IP addresses.
+      </p>
+      <p>
+      <pre><code>leon@raspberrypi ~> uname -a
+                    Linux raspberrypi 6.14.0-1005-raspi #5-Ubuntu SMP PREEMPT_DYNAMIC</code></pre>
+      </p>
+
+      <h2>An interjection, running Tailscale</h2>
+
+      For my first point
+
+      <ul>
+        <li>Self-hosted services need to be accesible from everywhere.</li>
+      </ul>
+
+      <p>
+        things would get somewhat complex too quickly. I'd need to run a VPN server, which is exposed online,
+        and have my traffict be routed through it. Actually, I'd have to think about the architecture of my VPN
+        - no thanks. Instead, I'll use Tailscale, a magic piece of software that implements Wireguard. But it's
+        not just a Wireguard wrapper - it's a hell of a good Wireguard wrapper.
+      </p>
+
+      <p> Tailscale lets you connect several clients into this network, and they manage the server for you. It's
+        free for up to 100 devices and 3 users, so that's plenty for me. Tailscale has a killer feature for this
+        deployment which is letting subnets be exposed through a client. I'll get into more detail about what
+        that means, but the bottom point is that we have a managed connection from my Raspberry Pi to the
+        outside world with a single line of code - <a href="https://tailscale.com/download">the Tailscale
+          installer</a>.</p>
+
+      <p>
+        I've also made my computer a client, so I can connect to my hosted services (and ssh) into the Pi from
+        anywhere. So now I can do this from anywhere in the world:
+      </p>
+
+      <pre><code>λ ssh leon@raspberrypi.tailnopnopnop.ts.net
+                Welcome to Ubuntu 25.04 (GNU/Linux 6.14.0-1005-raspi aarch64)
+                ...                
+                leon@raspberrypi ~></code></pre>
+
+      <h2>Pi-hole, the poor man's DNS</h2>
+      I initially was going to run <code>dnsmasq</code>, because I'm fairly familiar with it, but then I learned
+      that Wireguard is to Tailscale as dnsmasq is to Pi-hole. There's an embedded dnsmasq instance in Pi-hole, so
+      I
+      can just use that and get DNS-based ad-blocking throughout my network (potentially everywhere, using
+      Tailscale to access the Pi-hole instance - get how powerful that software is?).
+
+      To deploy Pi-hole, I installed Docker using their <a
+        href="https://github.com/docker/docker-install?tab=readme-ov-file#usage">convenience script</a>, created
+      a local <code>./etc-Pi-hole</code> directory and ran it once.
+
+      <pre><code class="language-yaml code-block">services:
+    Pi-hole:
+      image: docker.io/Pi-hole/Pi-hole:latest
+      container_name: Pi-hole
+      restart: unless-stopped
+      cap_add:
+        - NET_ADMIN
+        - SYS_TIME
+        - SYS_NICE
+      environment:
+        - TZ=Brazil/East
+        - FTLCONF_webserver_api_password={your_fun_password}
+        - FTLCONF_dns_listeningMode=all
+      volumes:
+        - ./etc-Pi-hole:/etc/Pi-hole
+      ports:
+        - "53:53/tcp"
+        - "53:53/udp"
+        - "67:67/udp"
+        - "80:80/tcp"
+        - "443:443/tcp"</code></pre>
+
+      <p>
+        I make this go up with <code>docker compose up -d</code> and go to
+        <code>http://{Tailscale IP of the pi}/admin</code> and use my password to login.
+      </p>
+
+      <h2>Digression: how does DNS-based blocking works?</h2>
+      <p>I wanto to quickly mention how Pi-hole actually works, because I don't want to assume you know. DNS is
+        like a phonebook which has a name (like <code>leonardoheld.ovh</code>) and an address (an IP address).
+      </p>
+      <p>Your computer says "Hi, I want to access <code>github.com</code> to the DNS server, and the DNS server
+        says "Sure, call 140.82.114.4". But 140.82.114.4 wants to make some money either tracking you or showing
+        you ads, so when you go to their website, it also forces you to call <code>evil-advertiser.com</code>
+        which shows you ads. Pi-hole runs a DNS server with a blocklist that contains
+        <code>evil-advertiser.com</code>, so when you unwillingly ask for it, it refuses to give you,
+        effectively blocking ads<a href="#footnote-2">[1]</a><a href="#footnote-3">[2]</a>.
+      </p>
+
+      <h2>Reverse Proxying</h2>
+      <p>As I told you, I want to have several services running in the same machine. This is a problem, because,
+        for example, these difference services will want to talk to the same port. So Pi-hole will try to have
+        its webserver running on <code>192.168.1.14:80</code> which will make my Registry deployment on the same
+        ip and port fail. </p>
+      <p>
+        To solve this situation, you run a piece of software called a reverse-proxy. A proxy and a reverse proxy
+        are the same thing, it's just a matter of perspective. From your perspective a proxy is a service that
+        you bounce to before getting to your target. From the perspective of a visitor to your target, a
+        reverse-proxy is a proxy that they hit.
+      </p>
+
+      <p>
+        Traefik is also a load-balancer: this is generally used when you need more than one server to balance
+        out the system load in serving the same requests, but it can also power a single server balancing
+        different requests. So even though we might have two services wanting <code>192.168.1.14:80</code>, we
+        put a load balancer in front of these services that allows them to use that port depending on the
+        request for one or the other.
+      </p>
+
+      <p>Here's how the deployment looks like now:</p>
+      <pre><code class="language-yaml code-block">services:
+                Pi-hole:
+                  image: docker.io/Pi-hole/Pi-hole:latest
+                  container_name: Pi-hole
+                  restart: unless-stopped
+                  cap_add:
+                    - NET_ADMIN
+                    - SYS_TIME
+                    - SYS_NICE
+                  environment:
+                    - TZ=Brazil/East
+                    - FTLCONF_webserver_api_password={your_fun_password}
+                    - FTLCONF_dns_listeningMode=all
+                  volumes:
+                    - ./etc-Pi-hole:/etc/Pi-hole
+                    - ./etc-Pi-hole/dnsmasq.d:/etc/dnsmasq.d
+                  ports:
+                    - "53:53/tcp"
+                    - "53:53/udp"
+                    - "67:67/udp"
+              #      - "80:80/tcp"
+              #      - "443:443/tcp"
+                  labels:
+                    - "traefik.enable=true"
+                    - "traefik.http.services.Pi-hole.loadbalancer.server.port=80"
+              
+                traefik:
+                  image: traefik:latest
+                  container_name: traefik
+                  restart: unless-stopped
+                  ports:
+                    - "80:80/tcp"
+                    - "443:443/tcp"
+                  volumes:
+                    - './traefik:/etc/traefik:Z'
+                    - '/var/run/docker.sock:/var/run/docker.sock'
+                  command:
+                    - "--log.level=DEBUG"
+                    - "--providers.file.directory=/etc/traefik/dynamic"
+                    - "--providers.file.watch=true"
+                    - "--serverTransport.respondingTimeouts.readTimeout=360s"
+                    - "--serverTransport.respondingTimeouts.writeTimeout=360s"
+                    - "--serverTransport.respondingTimeouts.idleTimeout=360s"
+              
+            </code></pre>
+
+      <p>Notice the following:</p>
+
+      <ul>
+        <li>
+          We don't need to publish Pi-hole's ports 80 (HTTP) and 443 (HTTPS) anymore, because Traefik will
+          load balance these ports for us. As in, I'll ask Traefik to give me Pi-hole on port 80 and it will
+          do it for me, hence why Traefik instead has these ports exposed to the host. You'll see the
+          importance of this when we add Registry in the mix.
+        </li>
+        <li>
+          I've mounted the Docker socket inside Traefik and gave Pi-hole some Traefik-specific labels. Traefik
+          will automatically pick those up from that socket mounted inside the container and generate some
+          configuration for us, all automagically. You can also write configuration files specific to Traefik
+          instead of using these.
+        </li>
+      </ul>
+
+      <h2>Setting up DNS-01 Challenge</h2>
+
+      <p>For the following requirement</p>
+
+      <ul>
+        <li>No stupid "this website is not protected" or whatever; TLS everywhere.</li>
+      </ul>
+
+      <p>I don't really knew how to go forward besides buying a domain name. Apparently <a
+          href="https://caddyserver.com/">Caddy Server</a> does some crazy shit that has HTTPS setup
+        automatically, but I needed a domain anyway and had already chosen Traefik.</p>
+
+      <p>Now, this is a lot of heavy-lifting being done by Traefik, but it can do something called a DNS-01
+        Challenge against a Domain Name that you control and automatically issue a Let's Encrypt-backed
+        certificate based on the result of that Challenge. ie, it's a proof that you control that domain, which
+        ensures people know it's not being tampered with when acessing it and allows for encryption which is the
+        whole point of TLS in the first place.</p>
+
+      <p>The kicker is, that if your Registrar (ie, the people who you bought the domain from) have an API,
+        everything can be done automatically. Literally just put your API keys in and Traefik will take care
+        that the special DNS records that prove you control the domain are created and poke Let's Encrypt to
+        poke the DNS records to see if they can really issue a certificate or not.</p>
+
+      <p> To accomplish this with Traefik, we need some extra labels and a bit more configuration. First, modify
+        the Docker compose to add HTTPS-specific labels:</p>
+
+      <pre><code class="language-yaml code-block">
+services:
+  Pi-hole:
+    image: docker.io/Pi-hole/Pi-hole:latest
+    container_name: Pi-hole
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_TIME
+      - SYS_NICE
+    environment:
+      - TZ=Brazil/East
+      - FTLCONF_webserver_api_password={your_fun_password}
+      - FTLCONF_dns_listeningMode=all
+    volumes:
+      - ./etc-Pi-hole:/etc/Pi-hole
+      - ./etc-Pi-hole/dnsmasq.d:/etc/dnsmasq.d
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.Pi-hole.rule=Host(`Pi-hole.leonardoheld.ovh`)"
+      - "traefik.http.routers.Pi-hole.entrypoints=websecure"
+      - "traefik.http.routers.Pi-hole.tls=true"
+      - "traefik.http.routers.Pi-hole.tls.certresolver=dnschallenge"
+      - "traefik.http.services.Pi-hole.loadbalancer.server.port=80"
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+    environment:
+      - OVH_ENDPOINT=ovh-ca
+      - OVH_APPLICATION_KEY=
+      - OVH_APPLICATION_SECRET=
+      - OVH_CONSUMER_KEY=
+    volumes:
+      - './traefik:/etc/traefik:Z'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    command:
+      - "--log.level=DEBUG"
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--providers.file.watch=true"
+      - "--serverTransport.respondingTimeouts.readTimeout=360s"
+      - "--serverTransport.respondingTimeouts.writeTimeout=360s"
+      - "--serverTransport.respondingTimeouts.idleTimeout=360s"
+
+            </code></pre>
+
+      <p>The most import ones are the OVH_* environment variables which will allow Traefik to connect to my OVH
+        account. Note that I also added <code>Pi-hole.leonardoheld.ovh</code>, which is how I want to access my
+        services, but I yet can't because my local DNS server, Pi-hole, doesn't know how to translate requests
+        to this address to an ip (which is the ip where Pi-hole is running itself, balanced by Treafik).</p>
+
+      <p>Next one is the Traefik configuration, <code>traefik.yml</code>, which is mounted locally through the
+        <code>./traefik</code> local directory:
+      </p>
+
+      <pre><code class="language-yaml code-block">api:
+            insecure: false
+              
+              providers:
+                docker:
+                  endpoint: "unix:///var/run/docker.sock"
+                  exposedByDefault: false
+                file:
+                  directory: "/etc/traefik/dynamic"
+                  watch: true
+              
+              entryPoints:
+                web:
+                  address: ":80"
+                  http:
+                    redirections:
+                      entryPoint:
+                        to: websecure
+                        scheme: https
+                websecure:
+                  address: ":443"
+              
+              certificatesResolvers:
+                dnschallenge:
+                  acme:
+                    email: [redacted because of crawlers]
+                    storage: /etc/traefik/acme.json
+                    dnsChallenge:
+                      provider: ovh
+              
+              log:
+                level: DEBUG
+                format: common
+              
+              accessLog: {}              
+            </code></pre>
+
+      <p>And I also added some configuration to access Traefik's own dashboard. Note that I never used the Docker
+        labels in the Traefik container itself, so it wasn't able to use the same strategy as it did for the
+        Pi-hole container, ie, it wasn't balancing itself:</p>
+
+      <pre><code class="language-yaml code-block">
+http:
+  routers:
+    traefik-dashboard:
+      rule: "Host(`traefik.leonardoheld.ovh`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      entryPoints:
+        - websecure
+      service: api@internal
+      tls:
+        certResolver: dnschallenge
+
+  services:
+    Pi-hole:
+      loadBalancer:
+        servers:
+          - url: "http://Pi-hole:80"
+
+            </code></pre>
+
+      <p>The really awesome thing with this setup is that I can use a DNS record on my domain to authenticate
+        internal subdomains. What I mean is: I don't have to expose <code>Pi-hole.leonardoheld.ovh</code> to the
+        internet, which is really good.</p>
+
+      <h2>Telling Pi-hole about my internal subdomains</h2>
+
+      <p>As I previously mentioned, I can't simply go to <code>Pi-hole.leonardoheld.ovh</code> becase my DNS
+        server, Pi-hole, doesn't know about it. I need to tell it to make requests to that address translate
+        into a request to the Pi where, incidentally, Pi-hole is also running on.</p>
+      <p>The good thing is that Pi-hole is a dnsmasq wrapper, and will happily load regular dnsmqas rules if
+        mounted properly. You might've noticed that I added a
+        <code>./etc-Pi-hole/dnsmasq.d:/etc/dnsmasq.d</code>
+        mount in my Pi-hole service. Inside this folder I simply have this rule:
+      </p>
+
+      <pre><code>
+                    ~/c/d/etc-Pi-hole> cat dnsmasq.d/01-leonardoovh.conf 
+                    address=/Pi-hole.leonardoheld.ovh/192.168.15.14
+                    address=/traefik.leonardoheld.ovh/192.168.15.14
+                </code></pre>
+
+      <p>Which says: "if I get a request to <code>{Pi-hole or traefik}.leonardoheld.ovh</code>, please tell the
+        requester that those services are located in <code>192.168.15.14</code>. And with that, I can access my
+        Traefik and Pi-hole dashboards, internally, with full HTTPS support:</p>
+
+      <img src="second/traefik-and-pihole.png" alt="Traefik and Pi-hole screenshots in Chromium" class="shadowed-image">
+      <figcaption>Come on, that's lit.
+      </figcaption>
+
+      <h2>Setting up a Docker Registry</h2>
+
+      As usual, coming back to my requirements:
+
+      <ul>
+        <li>With few configurations I must be able to add new services.</li>
+      </ul>
+
+      <p>It's trivial for me to add new deployments. For Registry, I can simply add a new service to my Compose
+        file, with the usual labels:</p>
+
+      <pre><code class="language-yaml code-block">
+                registry:
+                image: registry:2
+                container_name: registry
+                restart: unless-stopped
+                environment:
+                  - REGISTRY_STORAGE_DELETE_ENABLED=true
+                  - REGISTRY_HTTP_ADDR=0.0.0.0:5000
+                volumes:
+                  - ./registry-data:/var/lib/registry
+                labels:
+                  - "traefik.enable=true"
+                  - "traefik.http.routers.registry.rule=Host(`registry.leonardoheld.ovh`)"
+                  - "traefik.http.routers.registry.entrypoints=websecure"
+                  - "traefik.http.routers.registry.tls=true"
+                  - "traefik.http.routers.registry.tls.certresolver=dnschallenge"
+                  - "traefik.http.services.registry.loadbalancer.server.port=5000"
+            </code></pre>
+
+      <p> And have TLS-enabled Docker pulls from port 443 without messing with my <code>daemon.json</code> or
+        anything else. All local, too!</p>
+
+      <pre><code>leon@wuerstsalat ~> docker pull registry.leonardoheld.ovh/alpine
+    Using default tag: latest
+    latest: Pulling from alpine
+    Digest: sha256:cf8394f01e7f1f473d4f220370e9457279bce5baab9fe5be23ee0f1972dc71ff
+    Status: Image is up to date for registry.leonardoheld.ovh/alpine:latest
+    registry.leonardoheld.ovh/alpine:latest</code></pre>
+
+      <h2>Exposing a local subnet through Tailscale</h2>
+      <p> Now, let's say I do want to monitor my network or pull from elsewhere. How could I possibly do that? My
+        DNS is only available inside my local network. Tailscale can do that <i>easily</i>. You just go to the
+        admin panel and expose a <a href="https://tailscale.com/kb/1019/subnets">specific subnet</a> to the
+        Tailscale network, in my case, it's my local <code>192.168.x.x/24</code> and use the split DNS feature
+        for specific queries by pluggin in the address of my local DNS server, Pi-hole!
+      </p>
+
+      <img src="second/tailscale-split-dns.png" alt="Tailscale split DNS pane" class="shadowed-image">
+
+
+      <p>So everytime I'm making a request from a device inside my Tailscale network, Tailscale knows that
+        requests to <code>*.leonardoheld.ovh</code> should go to my local DNS server that I can connect to
+        because I've enabled the subnet to be available on the network! If this doesn't blow your mind, nothing
+        will.</p>
+
+      <h2>Wrapping up</h2>
+
+      <p>Last but not least, my requirement of cost:</p>
+
+      <ul>
+        <li>Cannot cost me more than 10USD. Preferably, free.</li>
+      </ul>
+
+      <p>The domain cost me like 3USD, GitHub pages hosting is free for public repos, Tailscale has a free plan
+        for up to 100 (!) devices and thre users and the rest of the software stack, from OS to userspace
+        applications is provided by the great FOSS community, which I'm very thankful for. So, I think I
+        definitely hit my goal.</p>
+
+      <p>Thank you for reading, hope you come back!</p>
+
+      <div class="footer">
+        <p>Creation Date: April 22nd, 2025</p>
+        <p>Author: Leonardo Held</p>
+      </div>
+    </div>
+
+    <p id="footnote-1">[0] <s>Yes, I know about Jails. No, it's not near the same level of convenience as Docker
+        containers.</s> Holy fucking shit, y'all, would you look at <a
+        href="https://people.freebsd.org/~dch/posts/2024-12-04-freebsd-containers/">this!</a></p>
+    <p id="footnote-2">[1] Which is effectively as editing the <code>/etc/hosts</code> file to make
+      <code>evil-advertiser.com</code> point to <code>127.0.0.1</code>
+    </p>
+    <p id="footnote-3">[2] This won't work if ads are served from the same domain. For example YouTube does that.
+    </p>
+</body>
+
+</html>

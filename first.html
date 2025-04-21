@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- I have no idea how to 'include' links and scripts from other files -->
+    <!-- If you know how to do it, please let me know -->
+    <meta charset="UTF-8">
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Local .css -->
+    <link rel="stylesheet" href="styles.css">
+
+
+    <!-- LaTeX support -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How I am blogging</title>
+</head>
+
+<body>
+    <script>hljs.highlightAll();</script>
+
+    <div class="content">
+        <div class="nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+        </div>
+
+        <div class="main-content">
+
+            <h1>How I am blogging</h1>
+
+            <p>
+                I've consistently tried to keep my computing life incredibly simple: few devices, few configurations. I
+                don't even have a <code>dotfile</code>s repository or anything. I use the defaults for everything.
+
+            <p> I really don't want to be fiddling with computers more than I have to. For the past three or so years
+                I've
+                never even bothered with tweaking a Linux distro or whatever for my computing needs: MacOS is Unix after
+                all.
+
+                For blogging, I even used Google sites because I was too lazy to setup a domain and write DNS records.
+            </p>
+            <p>
+                This situation has boiled over now that I actually have to manage some complexity, and I decided to
+                revamp my digital footprint and some of the infrastructure that I have at home. Starting with a domain
+                name and a proper blog.
+            </p>
+            <p>
+                This blog is written on HTML and it feels nostalgic - the last time I wrote "proper" HTML was when I was
+                barely a teenager, incidentally also hosting websites. It's not pure as I use some javascript - that I
+                don't maintain - but import from the web, for \(\LaTeX\) and custom font support, for example. But
+                overall, you download an HTML page and read the website. It's quite fast and infinitely portable!
+            </p>
+            <p>
+                I tried using static website generators like Jekyll and I think I'm too dumb for them. It's too
+                abstracted. It's HTML after all, why do I need it to be generated from markdown? Maybe I'm getting old.
+            </p>
+            <p>
+                Anyway, it's very simple: I write HTML and push it to a GitHub repo. This repo builds a bundle with my
+                HTML
+                files using the official GitHub pages actions, like this:
+            </p>
+
+            <pre><code class="language-yaml code-block">
+                - name: Checkout
+                  uses: actions/checkout@v4
+                - name: Setup Pages
+                  uses: actions/configure-pages@v5
+                - name: Upload artifact
+                  uses: actions/upload-pages-artifact@v3
+                  with:
+                    path: '.'
+                - name: Deploy to GitHub Pages
+                  id: deployment
+                  uses: actions/deploy-pages@v4
+                </code></pre>
+
+
+            <p> It's beautiful because I don't have to worry about anything other than writing HTML. Other than that, I
+                also setup a domain name with OVH and configured the <a
+                    href="https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site">DNS
+                    records</a> to make my domain point to the default
+                <code>{username}.github.io</username></code> url.
+            </p>
+
+            <p>Your GitHub repository, hosting the files, should specifically also have the same names as the url, like
+                <a
+                    href="https://github.com/leonardoheld/leonardoheld.github.io">github.com/leonardoheld/leonardoheld.github.io</a>,
+                otherwise it doesn't work, so this
+                website is also accessible via
+                <code>leonardoheld.github.io</code>
+            </p>
+
+            <p>
+                To write the HTML, I use Visual Studio Code with the default HTML formatter and use the
+                <code>open</code> utility
+                from MacOS to render it on my browser. I think sometime in the future I'll have a script with
+                <code>inotify</code><a href="#footnote-1">[0]</a> so I don't have to ⌘ + R every time I got to the
+                browser, but even that is rare; I
+                only had to do a bit of setup to have a <a href="template.html">template file</a>, which I copy every
+                time I want to create a new post.
+            <p>
+                On the matter of using some paid hosting service: because of HTML, I'm not bound to a particular format
+                or a peculiar
+                deployment - if Microsoft decides to kick me out, I'll spin a web server in a matter of minutes from my
+                home.
+            </p>
+
+            <p>And as some very smart person once said "this is a website, which means it sometimes goes offline".</p>
+            </p>
+
+            <p id="footnote-1">[0] I'm not using the amazing <a
+                    href="https://github.com/ritwickdey/vscode-live-server">LiveServer</a> extension
+                from Mr. Ritwick Dey</p>
+
+            <div class="footer">
+                <p>Creation Date: April 21st, 2025</p>
+                <p>Author: Leonardo Held</p>
+            </div>
+        </div>
+</body>
+
+</html>

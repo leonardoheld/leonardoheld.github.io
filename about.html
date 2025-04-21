@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- I have no idea how to 'include' links and scripts from other files -->
+    <!-- If you know how to do it, please let me know -->
+    <meta charset="UTF-8">
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
+    <!-- Local .css -->
+    <link rel="stylesheet" href="styles.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="content">
+        <div class="nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+        </div>
+
+
+        <div class="main-content">
+            <h1>Leonardo Held</h1>
+            <p>
+                Hello, I'm a systems engineer with a physics/electronics background.
+            </p>
+            <p>
+                <code>{firstname}{lastname} [at] protonmail [dot] com</code>
+            </p>
+            <h2>Professional Experience</h2>
+
+            <h3>Toradex</h3>
+            <div class="job-title">Senior Software Engineer</div>
+            <div class="job-period">2023 - Present</div>
+            <p>
+                I'm the maintainer of several repositories at Toradex, particularly within the Torizon Packages and
+                Containers Team in the Software Group.
+
+            </p>
+            <ul>
+
+                <li>Scaled infrastructure to massively build embedded production containers for end-customers, while
+                    growing from two embedded platforms to six.</li>
+                <li>Designed Release Engineering and CI/CD processes to minimize bugs in embedded customer applications.
+                </li>
+                <li>Implemented a hardware-in-the-loop <a href="https://github.com/torizon/aval">testing framework</a>
+                    for devices provisioned within Torizon Cloud</li>
+                <li>Debugged complex graphics, network, bootloader, kernel and performance issues on embedded devices.
+                </li>
+                <li>Spearheaded the initiative to always be up-to-date with the Debian project for Debian-based
+                    containers with Toradex's third-party package feed.</li>
+                <li>Debugged, developed, and packaged software in the standard Debian format for Embedded Devices
+                    running Debian (e.g., Mesa, Weston, Chromium, TensorFlow)</li>
+                <li>Introduced the use of industry-standard tools for building Debian packages and infrastructure.</li>
+                <li>Wrote testing software which, together with the rebuilt build infrastructure, was able to shorten
+                    the Torizon Containers project turnaround time from 9 months to zero days.</li>
+                <li>Worked as Technical Expert in contact with several of companies and customers, providing webinars,
+                    talks, technical business support and more.</li>
+                <li>As a communicator and developer advocate, I wrote several deeply technical blogposts and presented
+                    in conferences such as MiniDebConf and Embedded World.</li>
+                <li>Mentored several junior developers and collaborated in several instances with FAEs, customers and
+                    Technical Experts.</li>
+
+                <li>Started innovation projects (e.g., <a href="https://github.com/torizon/marino">Marino</a>, <a
+                        href="https://github.com/torizon/torizon-plugin-installer">Torizon Plugin Installer</a>)</li>
+                <li>Wrote technical articles for Torizon's Engineering Blog</li>
+            </ul>
+
+            <h3>Fraunhofer-Institut für Produktionstechnologie</h3>
+            <div class="job-title">Hilfswissenschaftler</div>
+            <div class="job-period">2022 - 2023</div>
+            At the Fraunhofer Institute I wrote my thesis on utilising Kubernetes with custom schedulers as an
+            orchestrator for Embedded Devices, providing a solid foudation which was later utilised as basis for further
+            research.
+            <ul>
+                <li>Developed a testbed using Embedded Linux Devices for custom Kubernetes schedulers</li>
+                <li>Researched industrial communication protocols such as OPC-UA</li>
+            </ul>
+
+            <h3>CERTI Foundation</h3>
+            <div class="job-title">Software Engineer</div>
+            <div class="job-period">2021 - 2022</div>
+            <ul>
+                <li>Developed an Embedded Linux gateway for a classified ECG medical device</li>
+                <li>Built an automated testing rig using Cucumber and Python</li>
+                <li>Led the porting of a newer Linux version to an existing device in Siemens' fleet</li>
+            </ul>
+
+            <h2>Education</h2>
+
+            <h3>Federal University of Santa Catarina (UFSC), Florianópolis, Brazil</h3>
+            <div class="job-title">BSc in Electronics Engineering</div>
+            <ul>
+                <li>Advisor: Prof. Dr. Raimes Morais</li>
+                <li>Thesis: <a
+                        href="https://mobile.repositorio.ufsc.br/bitstream/handle/123456789/244953/one-true-monograph.pdf?sequence=1&isAllowed=y">An
+                        architecture for context-aware deployment and monitoring of IoT applications using
+                        Kubernetes</a></li>
+                <li>Mix of Semiconductor and Communications Engineering with strong mathematical and physics background
+                </li>
+            </ul>
+
+            <h3>Rheinisch-Westfälische Technische Hochschule (RWTH), Aachen, Germany</h3>
+            <div class="job-title">Semester as an invited visiting student</div>
+
+            <h2>Skills</h2>
+            <ul>
+                <li><strong>Languages:</strong> Portuguese, English, always learning German</li>
+                <li><strong>Programming Languages:</strong> Python, C++, Rust (built non-trivial systems)</li>
+                <li><strong>General Software Skills:</strong> Software Architecture, Yocto, Embedded Linux, Graphics
+                    Stack, Docker, virtualization strategies, security hardening for Embedded Devices, testing systems
+                    with CI/CD capabilities, TDD, Jenkins, GitLab CI, GitHub Actions, U-boot, Git</li>
+            </ul>
+
+            <h2>Conference Talks</h2>
+            <ul>
+                <li>Embedded World Conference 2025: Lessons Learned from Automated Testing of Embedded Devices</li>
+                <li>Embedded World Conference 2025: The Status of Debian for Embedded Systems</li>
+                <li>Embedded World Conference 2024: Understanding SBOMs and complying with new Cybersecurity
+                    Requirements</li>
+                <li>MiniDebConf Belo Horizonte 2024: Embedded Systems and Open Source Software: a ridiculously fun
+                    combination</li>
+                <li>MiniDebConf Brasília 2023: Containers for Embedded Systems</li>
+            </ul>
+
+            <h2 id="about-technical-writing">Technical Writing</h2>
+            <ul>
+                <li><a href="https://torizon.github.io/blog/software-testing-the-hardware-software-interface-part-1/">Embedded
+                        Software Testing: the Hardware-Software Interface (Part 1)</a></li>
+                <li><a href="https://torizon.github.io/blog/software-testing-the-hardware-software-interface-part-2/">Embedded
+                        Software Testing: Practical Continuous Integration with Hardware in the Loop (Part 2)</a></li>
+                <li><a href="https://torizon.github.io/blog/how-does-hardware-acceleration-work-with-containers/">How
+                        does hardware acceleration work with containers?</a> <span class="sidenote">(sidenote: this one
+                        hit HackerNews' frontpage! I'm an avid reader, so I was quite happy.)</span></li>
+                <li><a
+                        href="https://torizon.github.io/blog/why-bare-metal-debian-and-raspberry-pi-os-is-not-a-good-choice-for-most-embedded-systems/">Why
+                        bare-metal Debian (and Raspberry Pi OS) is not a good choice for most Embedded Systems</a></li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Author: Leonardo Held</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- I have no idea how to 'include' links and scripts from other files -->
+    <!-- If you know how to do it, please let me know -->
+    <meta charset="UTF-8">
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <!-- Local .css -->
+    <link rel="stylesheet" href="styles.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static binaries and Homebrew as a channel for internal tools</title>
+</head>
+
+<body>
+
+    <div class="content">
+        <div class="nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+        </div>
+
+        <div class="main-content">
+
+            <h1>Static binaries and Homebrew as a channel for internal tools</h1>
+
+            <p>The Homebrew package manager is nice. It's not perfect, it's not performant, but in my opinion, for developer machines, it's by far the easiest and most flexible package manager, especially for quickly distributing internal tools. The flexibility comes from two main points:</p>
+
+            <ol>
+                <li>
+                    <p>Homebrew is thought of as the missing package manager for macOS, but it also works extremely well on Linux! It installs everything under <code>/opt</code> so it can coexist with other package managers, like <code>aptitude</code>.</p>
+                </li>
+                <li>
+                    <p>It's trivial to write and host third-party package feeds, also called <code>taps</code>. Get it? Because it's home<i>brew</i>.</p>
+                </li>
+            </ol>
+
+            <p>
+                Let's look at examples of how I used this daily. First, I have two internal tools that I wrote, <a href="https://gitlab.com/toradex/rd/torizon-core/decompose">Decompose</a>, which takes in a YAML Docker compose file and transforms it into its <code>docker run ...</code> form and <a href="https://gitlab.com/toradex/rd/torizon-core/xray-junit-uploader">xray-junit-uploader</a>, which takes a <code>junit</code> test results file and uploads it to the XRay test management software.
+            </p>
+            <p>
+                This is important: both tools are written in Rust and compile statically (with a dependency on glibc) for Linux x86. This is done by GitLab which automatically creates a release for me making the static binary <a href="https://gitlab.com/toradex/rd/torizon-core/xray-junit-uploader/-/releases/0.0.1">for download</a>. You don't <i>need</i> to compile tools statically, but I noticed it makes all the difference when working with engineers that use several dozens of different systems.
+            </p>
+
+            <p>Then, I write a Homebrew <a href="https://gitlab.com/toradex/rd/torizon-core/homebrew-toradex/-/blob/main/Formula/xray-junit-uploader.rb?ref_type=heads"><i>formula</i></a> in Ruby that instructs Homebrew to download and install that binary into the host system. This formula lives in a git repository (also known as a <i>tap</i>) aptly named <a href="https://gitlab.com/toradex/rd/torizon-core/homebrew-toradex"><i>homebrew-toradex</i></a>.</p>
+
+            <pre><code class="code-block">
+class Decompose < Formula
+  desc "Takes a docker-compose.yml and makes it into a docker run command"
+  homepage "https://gitlab.com/toradex/rd/torizon-core/decompose"
+  url "https://gitlab.com/toradex/rd/torizon-core/decompose/-/jobs/artifacts/0.0.1/raw/target/x86_64-unknown-linux-gnu/release/decompose?job=build-x86_64"
+  sha256 "51a53458b895f67cb6ec16735e96f0ec2eec3799a097ba4ca3d81790d03e5b81"
+  license "MIT"
+  version "0.0.1"
+
+  def install
+    bin.install "decompose"
+  end
+
+  test do
+    system "#{bin}/decompose", "--version"
+  end
+end</code></pre>
+
+            <p>The last step is easy: I just tap into <i>homebrew-toradex</i> and install the tool:</p>
+
+            <pre><code class="language-bash">
+# brew tap homebrew-toradex/xray-junit-uploader https://gitlab.int.toradex.com/rd/torizon-core-containers/homebrew-toradex.git
+# brew install xray-junit-uploader
+            </code></pre>
+
+            <p>It's particularly helpful on CI, and the Homebrew project provides a <code>homebrew/brew</code> Docker image which is handy. Here's a <a href="https://gitlab.com/toradex/rd/torizon-core/packages-and-containers/torizon-containers/-/blob/stable/ci-scripts/test/aval-tests.yml?ref_type=heads#L183"> example</a> of this strategy in production use.</p>
+
+            <p>No servers, no complex metadata, just easy tooling distribution.</p>
+        </div>
+        <div class="footer">
+            <p>Creation Date: June 16th, 2025</p>
+            <p>Author: Leonardo Held</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⢞⡵⠟⠉⠀⠀⠀⠀⠐⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢷⣴⡄⠀⠀⡷⢦⣄⣠⣄⠈⠳⣌⠓⣄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢠⡾⢳⡟⠀⠀⢀⣠⣄⣀⣤⠞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⡄⠀⡇⠀⠈⠉⢟⠳⢦⣽⣧⠈⠳⣄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣰⠟⠀⠘⠓⠒⠚⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣷⣤⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢦⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠋⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣷⡀⠀⠀⠀
+⠀⠀⠀⠀⡼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢳⡀⠀⠀
+⠀⠀⠀⡼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⠶⢲⡿⠋⠉⢱⠟⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⢳⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⠀⠀
+⠀⠀⣰⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⠶⠛⠉⢀⡴⢫⡅⠀⣠⣏⣀⣧⣤⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⢸⠈⢷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡇⠀
+⠀⢰⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⢞⠋⠀⠀⣠⣤⠞⠓⢺⠋⠉⡿⠀⠀⡇⠀⠀⣦⠀⠀⠀⠀⠀⠀⠀⠙⢷⣸⠀⠀⢻⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⠀
+⠀⡾⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠟⠉⢀⣼⡴⠚⠋⡽⠃⠀⠀⡆⠀⣸⠁⠀⠀⡇⠀⠀⡏⠀⠀⠀⠀⠀⠀⢠⠀⠀⢹⣦⠀⠀⠹⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡀
+⢀⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⠟⣡⡴⠚⣩⡇⠀⢀⡞⠡⣄⡀⠀⡇⢠⠇⠀⠀⠀⣇⠀⢰⣟⢸⡇⠀⠀⠀⠀⢸⠀⠀⢸⠈⢷⡀⠀⠹⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇
+⠸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⠗⣋⠁⠀⣰⢻⠀⣠⠏⠀⠀⠀⠈⠉⡏⡟⠒⠒⠒⠚⢻⠁⣸⢿⡘⡏⠀⠀⠀⠀⣾⠀⠀⣸⡆⠀⠹⣄⠀⢹⡆⠀⠀⠀⠀⠀⠀⠀⠀⠇
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣼⠟⠋⠀⠀⡟⠀⢠⠇⢸⣰⠏⠀⠀⠀⠀⠀⠀⣷⠃⠀⠀⠀⠀⢸⢀⡇⠈⣷⠃⠀⠀⠀⣼⢹⠀⢀⡟⣧⠀⠀⢹⣧⠀⢻⡄⠀⠀⠀⠀⠀⠀⠀⠂
+⠀⠀⠀⠀⠀⠀⠀⠀⢠⣼⡟⢹⡇⠀⠀⢸⡇⠀⡟⠀⣼⣇⡀⠀⠀⠀⠀⠀⠀⠘⠀⠀⠀⠀⠀⠘⣾⠀⠀⣿⠀⠀⠀⢰⠏⢸⡀⡼⠀⢸⠀⠀⢸⠈⢧⡀⣷⠀⠀⠀⠀⠀⠀⠀⡇
+⠀⠀⠀⠀⠀⠀⠀⢀⣴⠋⠀⠸⡇⠀⠀⣿⡇⢸⠁⠀⠈⠛⢿⣷⣶⣤⣀⡀⠲⠦⣄⡀⠀⠀⠀⠀⠛⠀⠀⢻⠀⠀⢠⠏⠀⢸⡼⠧⣄⠘⡆⠀⡞⠀⠈⢳⣽⡇⠀⠀⠀⠀⠀⠀⡇
+⠀⠀⠀⠀⠀⠀⢠⡾⠁⠀⠀⠀⢻⡀⠀⡿⣿⡏⠀⠀⠀⠀⢸⣿⠉⠙⠻⠿⢿⣶⣶⡾⠀⠀⠀⠀⠀⠀⠀⡾⠀⣠⠏⠀⠀⡞⠁⠀⠈⠑⡷⢤⣇⡀⠀⠀⢻⣿⠀⠀⠀⠀⠀⢸⠁
+⠀⠀⠀⠀⠀⣰⡟⠀⠀⠀⠀⠀⠈⣷⡀⡇⢹⡇⠀⠀⠀⠀⠘⣿⣆⠆⠀⢀⣴⡿⠋⠁⠀⠀⠀⠀⠀⠀⢠⣇⡴⢣⣀⠀⠀⠀⠀⠀⠀⠀⣇⣾⠀⠀⠀⡀⠈⢿⡇⠀⠀⠀⢀⡎⠀
+⠀⠀⠀⠀⣸⣿⡆⠀⠀⠀⠀⠀⠀⢻⣧⡙⢿⡁⠀⠀⠀⠀⠀⠈⠻⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⡾⠏⠀⢸⣿⣭⣑⡂⠀⠀⠀⠀⡟⢸⠀⠀⢀⡇⠀⢸⡇⠀⠀⠀⣾⠁⠀
+⠀⠀⠀⣼⣿⣿⡇⠀⠀⠀⠀⠀⠀⢸⣿⣷⡸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⡟⠿⢿⣷⣶⣶⣤⣼⡀⠀⢸⡇⠀⣿⣇⠀⠀⣴⠇⠀⠀
+⠀⠀⢸⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠈⣿⡿⣷⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣇⡀⠀⠁⣨⣿⡟⡛⠀⢀⣿⠀⢸⣿⡏⠀⣼⡏⠀⠀⠀
+⠀⢠⣿⣿⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⢿⡇⢿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⢿⣿⣤⣾⡿⠋⢀⡇⢀⣼⡇⠀⣾⢿⡇⢠⡟⠁⠀⠀⠀
+⠀⣼⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⢸⣇⠘⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠀⠀⠀⣸⢃⡞⢩⠁⣼⠃⢸⢧⡾⠀⠀⠀⠀⠀
+⢀⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⢸⡟⢧⡀⠀⠀⠀⠀⠀⠀⠀⢠⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠟⢠⣞⡼⠃⢀⣿⣾⡇⠀⠀⠀⠀⠀
+⣸⣿⣿⣿⣿⣿⣿⣧⢀⠀⠀⠀⠀⠀⢸⡇⠈⣷⣄⠀⠀⠀⠀⠀⠀⢸⠛⠛⠷⢦⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣥⢀⣴⠟⢀⡾⣼⠏⡿⠀⠀⠀⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⢸⣇⠀⣿⠙⢦⡀⠀⠀⠀⠀⠸⣆⠀⠀⠀⠈⠻⣿⣷⡦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠟⢡⡞⠁⢠⡟⣹⠏⢸⠇⠀⠀⠀⠀⠀⠀
+⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⢸⣿⡆⣼⠀⣾⠙⢦⡀⠀⠀⠀⠈⠛⠲⠤⠤⠤⠽⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⡿⡁⢸⡟⠀⣴⢟⣴⠟⠀⣾⡇⠀⠀⠀⠀⠀⠀
+⠙⢿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⣾⣿⣷⣹⠀⡿⠀⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡴⠟⣹⢟⡇⠘⢡⣾⣷⠟⠁⠀⠀⢹⡇⠀⠀⠀⠀⠀⠀
+⠀⠈⢻⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⡏⢠⡇⠀⠀⠀⠀⠙⠦⣄⣀⣀⣀⣀⣀⣀⣀⣀⣠⣤⣤⣤⡴⠖⠛⠋⠁⣠⠞⠁⢸⢀⣴⠿⠋⠁⠀⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀
+⠀⠀⠈⢿⣿⠃⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣇⣼⠁⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠉⣽⠛⣉⣴⣿⣿⡏⠀⠀⠀⢀⣠⠞⠁⠀⠀⣿⠟⠁⠀⠀⠀⠀⠀⢀⣀⣾⡇⠀⠀⠀⠀⠀⠀
+⢷⣄⠀⢸⡏⠀⠀⠀⠀⠀⠀⠀⢠⡟⠿⢿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⠶⠚⠛⠉⠉⠛⠿⣿⡀⠀⢀⣴⠟⠁⠀⠀⠀⣼⣏⣀⣀⣤⣴⣶⣾⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀
+⠀⠙⠳⣿⠁⠀⠀⠀⠀⠀⠀⠀⣼⠀⠀⠀⠚⣿⣦⡀⠀⠀⠀⠀⢀⣤⠞⠋⠀⠀⠀⠀⠀⣀⣤⣴⡿⠀⣰⠟⠁⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢀⡇⠀⠀⠀⠀⠀⠀⠀⢸⣏⣀⣀⣀⡀⠈⢛⢷⣤⣀⣤⡴⡛⠁⠀⠀⢀⡲⠶⠞⠛⠉⠁⣸⡇⣶⠋⠀⠀⠀⠀⠀⠀⡾⠁⠀⠀⠈⠉⣻⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀
+
+Hey, cutie :*
+-->
+
+<head>
+    <!-- I have no idea how to 'include' links and scripts from other files -->
+    <!-- If you know how to do it, please let me know -->
+    <meta charset="UTF-8">
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fondamento&display=swap" rel="stylesheet">
+    <!-- Local .css -->
+    <link rel="stylesheet" href="styles.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Leon's Digital Garden</title>
+
+</head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="content">
+        <div class="header">
+            <h1>Leon's Digital Garden</h1>
+        </div>
+
+        <div class="nav">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+        </div>
+
+        <div class="main-content">
+            <h2>Home</h2>
+            <p>Hello, this is my little garden on the web, and here I write about things I like.</p>
+            <p>I'm not a web developer, but I tried making this website responsive and accessible (in the sense of 'usability for people with disabilities'), but if you think I missed something to accomplish that goal, please let me know.</p>
+
+            <p>For my curriculum vitæ and contact information, please head over to <a href="about.html"><i>about</i></a>.</p>
+
+
+            <h2>Posts</h2>
+
+            <p>Here is the main content of the website:</p>
+            <ul>
+                <li><a href="static-binaries-and-homebrew-for-internal-tools.html">Static binaries and Homebrew as a channel for internal tools</a> <span
+                    class="dater">June 16th, 2025</span></li>
+                <li><a href="fourth.html">Please shut up about programmer's preferences when discussing memory safety</a> <span
+                    class="dater">May 7th, 2025</span></li>
+                <li><a href="second.html">Baby's first Homelab: setting up a Pi with Pi-hole, Traefik, Tailscale and
+                        Registry</a> <span class="dater">April 22nd, 2025</span></li>
+                <li><a href="first.html">How I am blogging</a> <span class="dater">April 21st, 2025</span></li>
+            </ul>
+
+            <p>More technical writing, done outside the personal context, can be found <a href="about.html#about-technical-writing">here</a>.</p>
+
+            <h2>License</h2>
+            <p xmlns:cc="http://creativecommons.org/ns#" >All original contents of this blog, except where otherwise noted or stated, are licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-SA 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1" alt=""><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1" alt=""></a></p>        </div>
+    </div>
+</body>
+
+</html>
